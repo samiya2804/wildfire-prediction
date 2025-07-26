@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wildfire Risk Predictor</title>
+  <!-- <link rel="stylesheet" href="style.css"> -->
+</head>
+<body>
+    <style>
+        body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f7f7f7;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 40px;
+}
+
+.container {
+  background: white;
+  padding:40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 328px;
+  width: 50%;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #c0392b;
+      font-size: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+input {
+  width: 94.5%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  font-size: 16px;
+  border-radius: 6px;
+      margin-top: 12px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #c0392b;
+}
+
+#result {
+  margin-top: 20px;
+  font-size: 18px;
+  text-align: center;
+  font-weight: bold;
+}
+
+@media(max-width:768px) {
+  body {
+    padding: 20px;
+  }
+  .container {
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 100%;
+        margin-top: 26rem;
+        max-width: auto;
+  }
+  input, button {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  h1 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  #result {
+    font-size: 16px;
+  }
+}
+    </style>
+  <div class="container">
+    <h1>🔥 Wildfire Risk Predictor</h1>
+    <form id="fireForm">
+      <div class="form-group"><input type="number" id="X" placeholder="X (1-9)" required></div>
+      <div class="form-group"><input type="number" id="Y" placeholder="Y (1-9)" required></div>
+      <div class="form-group"><input type="number" id="FFMC" placeholder="FFMC" required></div>
+      <div class="form-group"><input type="number" id="DMC" placeholder="DMC" required></div>
+      <div class="form-group"><input type="number" id="DC" placeholder="DC" required></div>
+      <div class="form-group"><input type="number" id="ISI" placeholder="ISI" required></div>
+      <div class="form-group"><input type="number" id="temp" placeholder="Temperature (°C)" required></div>
+      <div class="form-group"><input type="number" id="RH" placeholder="Humidity (%)" required></div>
+      <div class="form-group"><input type="number" id="wind" placeholder="Wind Speed (km/h)" required></div>
+      <div class="form-group"><input type="number" id="rain" placeholder="Rainfall (mm)" required></div>
+      <button type="submit">Predict</button>
+    </form>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    document.getElementById('fireForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const data = {
+    X: parseFloat(document.getElementById('X').value),
+    Y: parseFloat(document.getElementById('Y').value),
+    FFMC: parseFloat(document.getElementById('FFMC').value),
+    DMC: parseFloat(document.getElementById('DMC').value),
+    DC: parseFloat(document.getElementById('DC').value),
+    ISI: parseFloat(document.getElementById('ISI').value),
+    temp: parseFloat(document.getElementById('temp').value),
+    RH: parseFloat(document.getElementById('RH').value),
+    wind: parseFloat(document.getElementById('wind').value),
+    rain: parseFloat(document.getElementById('rain').value)
+  };
+
+  const res = await fetch("/predict", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const result = await res.json();
+  document.getElementById('result').innerText = result.fire_risk === 1 
+    ? "🔥 High Fire Risk Detected" 
+    : "✅ No Fire Risk";
+};
+
+  </script>
+</body>
+</html>
